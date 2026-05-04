@@ -1,0 +1,169 @@
+#[derive(Debug, PartialEq, Eq)]
+enum MicroStep {
+    F,
+    R,
+    P,
+}
+
+fn execute_forward() {
+    println!("  → F (Forward)");
+}
+
+fn execute_reverse() {
+    println!("  ← R (Reverse)");
+}
+
+fn execute_pause() {
+    println!("  ■ P (Pause - чакане)");
+}
+
+// Вече не е pub, защото засега се ползва само в тестовете
+fn run_instruction(steps: &[MicroStep; 7]) {
+    for step in steps {
+        match step {
+            MicroStep::F => execute_forward(),
+            MicroStep::R => execute_reverse(),
+            MicroStep::P => execute_pause(),
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_instruction_minus_11() {
+        let steps: [MicroStep; 7] = [
+            MicroStep::R, MicroStep::P, MicroStep::R, MicroStep::R,
+            MicroStep::R, MicroStep::R, MicroStep::R,
+        ];
+        run_instruction(&steps);
+    }
+
+    #[test]
+    fn test_instruction_plus_15() {
+        let steps: [MicroStep; 7] = [
+            MicroStep::F, MicroStep::F, MicroStep::F, MicroStep::F,
+            MicroStep::F, MicroStep::F, MicroStep::F,
+        ];
+        run_instruction(&steps);
+    }
+}
+
+
+// Дефинираме таблицата с всички 27 инструкции
+const LUT: [[MicroStep; 7]; 27] = [
+    // Индекс 0: -11,1011, -13, троично -1 -1 -1
+    [R, P, R, R, R, R, R],
+    // Индекс 1: -10,1010, -12, троично -1 -1 0
+    [R, P, R, P, R, R, P],
+    // Индекс 2: -9, 1001, -11, троично -1 0 0
+    [P, R, R, R, R, P, P],
+    // Индекс 3: -8, 1000, -10, троично -1 0 +1
+    [P, R, R, P, R, P, F],
+    // Индекс 4: -7, 0111, -9, троично -1 +1 -1
+    [P, R, P, R, R, F, R],
+    // Индекс 5: -6, 0110, -8, троично -1 0 +1
+    [P, R, R, P, R, P, F],
+    // Индекс 6: -5, 0101, -7, троично -1 +1 -1
+    [P, R, P, R, R, F, R],
+    // Индекс 7: -4, 0100, -6, троично -1 +1  0
+    [P, R, P, P, R, F, P)],
+    // Индекс 8: -3, 0011, -5, троично -1 +1 +1
+    [P, P, R, R, R, F, F],
+    // Индекс 9: -2, 0010, -4, троично 0 -1 -1
+    [P, P, R, P, P, R, R],
+    // Индекс 10: -1, 0001, -3, троично 0 -1 0
+    [P, P, P, R, P, R, P],
+    // Индекс 11: 0, 0000, -2, троично 0 -1 +1
+    [P, P, P, P, P, R, F],
+    // Индекс 12: 1, 0001, -1, троично 0  0 -1
+    [P, P, P, F, P, P, R],
+    // Индекс 13: 2, 0010, 0, троично 0  0  0
+    [P, P, F, P, P, P, P],
+    // Индекс 14: 3, 0011, 1, троично 0  0 +1
+    [P, P, F, F, P, P, F],
+    // Индекс 15: 4, 0100, 2, троично 0 +1 -1
+    [P, F, P, P, P, F, R],
+    // Индекс 16: 5, 0101, 3, троично 0 +1  0
+    [P, F, P, F, P, F, P],
+    // Индекс 17: 6, 0110, 4, троично 0 +1 +1
+    [P, F, F, P, P, F, F],
+    // Индекс 18: 7, 0111, 5, троично 0+10
+    [P, F, F, F, F, R, R],
+    // Индекс 19: 8, 1000, 6, троично +1 -1  0
+    [F, F, P, P, F, R, P],
+    // Индекс 20: 9, 1001, 7, троично +1 -1 +1
+    [F, P, P, F, F, R, F],
+    // Индекс 21: 10, 1010, 8, троично +1  0 -1
+    [F, P, F, P, F, P, R],
+    // Индекс 22: 11, 1011, 9, троично +1  0  0
+    [F, P, F, F, F, P, P],
+    // Индекс 23: 12, 1100, 10, троично +1  0 +1
+    [F, F, P, P, F, P, F],
+    // Индекс 24: 13, 1101, 11, троично +1 +1 -1
+    [F, F, P, F, F, F, R],
+    // Индекс 25: 14, 1110, 12, троично +1 +1  0
+    [F, F, F, P, F, F, P],
+    // Индекс 26: +15, 1111, 13, троично +1 +1 +1
+    [F, F, F, F, F, F, F],
+];
+
+// Функция за търсене по nibble (двоичен режим)
+fn get_instruction_by_nibble(nibble: i8) -> Option<&[MicroStep; 7]> {
+    // Преобразуваме nibble в индекс (0..26)
+    let index = (nibble + 11) as usize; // -11 → 0, +15 → 26
+    LUT.get(index)
+}
+
+// Функция за търсене по троичен вектор
+fn get_instruction_by_trits(trits: (i8, i8, i8)) -> Option<&[MicroStep; 7]> {
+    // Преобразуваме тритовете в индекс (0..26)
+    let index = ((trits.0 + 1) * 9 + (trits.1 + 1) * 3 + (trits.2 + 1)) as usize;
+    LUT.get(index)
+}
+
+// Главна функция, която обработва заявка
+fn execute_request(mode: Mode, key: RequestKey) {
+    let steps = match key {
+        RequestKey::Nibble(n) => get_instruction_by_nibble(n),
+        RequestKey::Trits(t) => get_instruction_by_trits(t),
+    };
+    
+    match steps {
+        Some(steps) => run_instruction(steps),  // Изпълнява 7-те такта
+        None => panic!("Невалидна заявка"),
+    }
+}
+/*
+|Dec  | Nibble (Bin)  | Балансиран троичен (t)  | Work тактове (последователност) | Decb3 | Общо такта | Hex    |
+|-----|---------------|-------------------------|---------------------------------|-------|------------|--------|
+| -11 |     1011      |       -1 -1 -1          | 4 (R, P, R, R) 3 (R, R, R)      |   -13 |     7      |  0x0B  |
+| -10 |     1010      |       -1 -1  0          | 4 (R, P, R, P) 3 (R, R, P)      |   -12 |     7      |  0x0A  |
+|  -9 |     1001      |       -1 -1 +1          | 4 (R, P, P, R) 3 (R, R, F)      |   -11 |     7      |  0x09  |
+|  -8 |     1000      |       -1  0 -1          | 4 (R, P, P, P) 3 (R, P, R)      |   -10 |     7      |  0x08  |
+|  -7 |     0111      |       -1  0  0          | 4 (P, R, R, R) 3 (R, P, P)      |    -9 |     7      |  0x07  |
+|  -6 |     0110      |       -1  0 +1          | 4 (P, R, R, P) 3 (R, P, F)      |    -8 |     7      |  0x06  |
+|  -5 |     0101      |       -1 +1 -1          | 4 (P, R, P, R) 3 (R, F, R)      |    -7 |     7      |  0x05  |
+|  -4 |     0100      |       -1 +1  0          | 4 (P, R, P, P) 3 (R, F, P)      |    -6 |     7      |  0x04  |
+|  -3 |     0011      |       -1 +1 +1          | 4 (P, P, R, R) 3 (R, F, F)      |    -5 |     7      |  0x03  |
+|  -2 |     0010      |        0 -1 -1          | 4 (P, P, R, P) 3 (P, R, R)      |    -4 |     7      |  0x02  |
+|  -1 |     0001      |        0 -1  0          | 4 (P, P, P, R) 3 (P, R, P)      |    -3 |     7      |  0x01  |
+|   0 |     0000      |        0 -1 +1          | 4 (P, P, P, P) 3 (P, R, F)      |    -2 |     7      |  0x00  |
+|   1 |     0001      |        0  0 -1          | 4 (P, P, P, F) 3 (P, P, R)      |    -1 |     7      |  0x01  |
+|   2 |     0010      |        0  0  0          | 4 (P, P, F, P) 3 (P, P, P)      |     0 |     7      |  0x02  |
+|   3 |     0011      |        0  0 +1          | 4 (P, P, F, F) 3 (P, P, F)      |     1 |     7      |  0x03  |
+|   4 |     0100      |        0 +1 -1          | 4 (P, F, P, P) 3 (P, F, R)      |     2 |     7      |  0x04  |
+|   5 |     0101      |        0 +1  0          | 4 (P, F, P, F) 3 (P, F, P)      |     3 |     7      |  0x05  |
+|   6 |     0110      |        0 +1 +1          | 4 (P, F, F, P) 3 (P, F, F)      |     4 |     7      |  0x06  |
+|   7 |     0111      |       +1 -1 -1          | 4 (P, F, F, F) 3 (F, R, R)      |     5 |     7      |  0x07  |
+|   8 |     1000      |       +1 -1  0          | 4 (F, F, P, P) 3 (F, R, P)      |     6 |     7      |  0x08  |
+|   9 |     1001      |       +1 -1 +1          | 4 (F, P, P, F) 3 (F, R, F)      |     7 |     7      |  0x09  |
+|  10 |     1010      |       +1  0 -1          | 4 (F, P, F, P) 3 (F, P, R)      |     8 |     7      |  0x0A  |
+|  11 |     1011      |       +1  0  0          | 4 (F, P, F, F) 3 (F, P, P)      |     9 |     7      |  0x0B  |
+|  12 |     1100      |       +1  0 +1          | 4 (F, F, P, P) 3 (F, P, F)      |    10 |     7      |  0x0C  |
+|  13 |     1101      |       +1 +1 -1          | 4 (F, F, P, F) 3 (F, F, R)      |    11 |     7      |  0x0D  |
+|  14 |     1110      |       +1 +1  0          | 4 (F, F, F, P) 3 (F, F, P)      |    12 |     7      |  0x0E  |
+|  15 |     1111      |       +1 +1 +1          | 4 (F, F, F, F) 3 (F, F, F)      |    13 |     7      |  0x0F  |
+*/
