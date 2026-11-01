@@ -1,0 +1,8 @@
+[package]
+name = "chrono-bin-tern"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "chrono_bin_tern"
+path = "src/lib.rs"
