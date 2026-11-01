@@ -42,9 +42,9 @@ fn run_instruction(steps: &[MicroStep; 7]) {
 const LUT: [[MicroStep; 7]; 27] = [
     [MicroStep::R, MicroStep::P, MicroStep::R, MicroStep::R, MicroStep::R, MicroStep::R, MicroStep::R],
     [MicroStep::R, MicroStep::P, MicroStep::R, MicroStep::P, MicroStep::R, MicroStep::R, MicroStep::P],
+    [MicroStep::R, MicroStep::P, MicroStep::P, MicroStep::R, MicroStep::R, MicroStep::R, MicroStep::F],
+    [MicroStep::R, MicroStep::P, MicroStep::P, MicroStep::P, MicroStep::R, MicroStep::P, MicroStep::R],
     [MicroStep::P, MicroStep::R, MicroStep::R, MicroStep::R, MicroStep::R, MicroStep::P, MicroStep::P],
-    [MicroStep::P, MicroStep::R, MicroStep::R, MicroStep::P, MicroStep::R, MicroStep::P, MicroStep::F],
-    [MicroStep::P, MicroStep::R, MicroStep::P, MicroStep::R, MicroStep::R, MicroStep::F, MicroStep::R],
     [MicroStep::P, MicroStep::R, MicroStep::R, MicroStep::P, MicroStep::R, MicroStep::P, MicroStep::F],
     [MicroStep::P, MicroStep::R, MicroStep::P, MicroStep::R, MicroStep::R, MicroStep::F, MicroStep::R],
     [MicroStep::P, MicroStep::R, MicroStep::P, MicroStep::P, MicroStep::R, MicroStep::F, MicroStep::P],
