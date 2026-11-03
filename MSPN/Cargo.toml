@@ -1,0 +1,45 @@
+[package]
+name = "mspn"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.70"
+authors = ["ChronoBinTern contributors"]
+description = "Microstep-Signed Positional Notation — a reversible forward-backward encoding of BSD arithmetic for hybrid Boolean–balanced-ternary systems"
+license = "AGPL-3.0-or-later"
+repository = "https://github.com/ChronoBinTern68478-cmyk/ChronoBinTern"
+documentation = "https://docs.rs/mspn"
+keywords = ["ternary", "signed-digit", "bsd", "reversible", "encoding"]
+categories = ["no-std", "algorithms", "encoding"]
+readme = "README.md"
+
+# ── Library target ──────────────────────────────────────
+[lib]
+name = "mspn"
+path = "src/lib.rs"
+
+# ── Example targets ─────────────────────────────────────
+[[example]]
+name = "bitnet_demo"
+path = "examples/bitnet_demo.rs"
+
+[[example]]
+name = "basic"
+path = "examples/basic.rs"
+
+[[example]]
+name = "naf_demo"
+path = "examples/naf_demo.rs"
+
+
+
+[dependencies]
+
+[dev-dependencies]
+proptest = "1.4"
+criterion = "0.5"
+
+
+[features]
+default = ["std"]
+std = []
+alloc = []

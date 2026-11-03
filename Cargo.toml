@@ -6,3 +6,10 @@ edition = "2021"
 [lib]
 name = "chrono_bin_tern"
 path = "src/lib.rs"
+
+[workspace]
+members = [
+    ".",        # chrono-bin-tern
+    "MSPN",     # mspn
+]
+resolver = "2"
