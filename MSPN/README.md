@@ -27,7 +27,6 @@ See Binary Signed Digit (English)](Docs/EN/03-prior-art.md)
 
 
 
- [03-prior-art.md](DOCS/EN/03-prior-art.md).
 
 ## License
 
