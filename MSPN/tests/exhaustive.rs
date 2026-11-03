@@ -29,12 +29,7 @@ fn exhaustive_n4() {
     let max = 2i64.pow(n as u32) - 1;
     for v in -max..=max {
         let (bits, steps) = canonical(v, n);
-        assert_eq!(
-            mspn_eval(&bits, &steps),
-            Ok(v),
-            "failed for V = {}",
-            v
-        );
+        assert_eq!(mspn_eval(&bits, &steps), Ok(v), "failed for V = {}", v);
     }
 }
 
@@ -44,11 +39,6 @@ fn exhaustive_n8() {
     let max = 2i64.pow(n as u32) - 1;
     for v in -max..=max {
         let (bits, steps) = canonical(v, n);
-        assert_eq!(
-            mspn_eval(&bits, &steps),
-            Ok(v),
-            "failed for V = {}",
-            v
-        );
+        assert_eq!(mspn_eval(&bits, &steps), Ok(v), "failed for V = {}", v);
     }
 }

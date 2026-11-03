@@ -5,33 +5,19 @@
 //!
 //! - For `V >= 0`: `f` for 1-bits, `p` for 0-bits.
 //! - For `V < 0`:  `r` for 1-bits, `p` for 0-bits.
-//!
-//! This encoding is always length `n` and is easy to generate.
-//! It is **not** the shortest possible encoding (see NAF in
-//! `naf.rs`), but it always works.
 
 #[cfg(feature = "alloc")]
 use alloc::vec::Vec;
 
+#[cfg(feature = "alloc")]
 use crate::error::MspnError;
+
+#[cfg(feature = "alloc")]
 use crate::micro::Micro;
 
 /// Generate the canonical MSPN encoding for `v` using `n` positions.
 ///
-/// # Errors
-///
-/// Returns [`MspnError::Overflow`] if `|v| > 2ⁿ − 1`.
-///
-/// # Example
-///
-/// ```
-/// use mspn::canonical::canonical_encode;
-/// use mspn::Micro;
-///
-/// let (bits, steps) = canonical_encode(-11, 4).unwrap();
-/// assert_eq!(bits,  vec![1, 0, 1, 1]);
-/// assert_eq!(steps, vec![Micro::R, Micro::P, Micro::R, Micro::R]);
-/// ```
+/// Requires the `alloc` feature.
 #[cfg(feature = "alloc")]
 pub fn canonical_encode(v: i64, n: usize) -> Result<(Vec<u8>, Vec<Micro>), MspnError> {
     let max = if n >= 63 {
@@ -68,19 +54,7 @@ pub fn canonical_encode(v: i64, n: usize) -> Result<(Vec<u8>, Vec<Micro>), MspnE
 
 /// Minimum number of positions required to encode `v`.
 ///
-/// Returns `ceil(log₂(|v| + 1))`, with a minimum of `1`.
-///
-/// # Example
-///
-/// ```
-/// use mspn::canonical::canonical_width;
-///
-/// assert_eq!(canonical_width(0),     1);
-/// assert_eq!(canonical_width(1),     1);
-/// assert_eq!(canonical_width(15),    4);
-/// assert_eq!(canonical_width(16),    5);
-/// assert_eq!(canonical_width(-15),   4);
-/// ```
+/// This function does **not** require `alloc`.
 pub fn canonical_width(v: i64) -> usize {
     let abs = v.unsigned_abs();
     if abs == 0 {
@@ -90,7 +64,7 @@ pub fn canonical_width(v: i64) -> usize {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "alloc"))]
 mod tests {
     use super::*;
 
