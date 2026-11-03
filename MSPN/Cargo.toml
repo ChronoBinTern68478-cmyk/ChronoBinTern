@@ -41,5 +41,5 @@ criterion = "0.5"
 
 [features]
 default = ["std"]
-std = []
+std = ["alloc"]
 alloc = []

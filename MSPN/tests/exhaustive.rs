@@ -25,8 +25,9 @@ fn canonical(v: i64, n: usize) -> (Vec<u8>, Vec<Micro>) {
 
 #[test]
 fn exhaustive_n4() {
-    let n = 4;
-    for v in -(2i64.pow(n) - 1)..=(2i64.pow(n) - 1) {
+    let n: usize = 4;
+    let max = 2i64.pow(n as u32) - 1;
+    for v in -max..=max {
         let (bits, steps) = canonical(v, n);
         assert_eq!(
             mspn_eval(&bits, &steps),
@@ -39,8 +40,9 @@ fn exhaustive_n4() {
 
 #[test]
 fn exhaustive_n8() {
-    let n = 8;
-    for v in -(2i64.pow(n) - 1)..=(2i64.pow(n) - 1) {
+    let n: usize = 8;
+    let max = 2i64.pow(n as u32) - 1;
+    for v in -max..=max {
         let (bits, steps) = canonical(v, n);
         assert_eq!(
             mspn_eval(&bits, &steps),
